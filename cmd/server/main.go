@@ -13,6 +13,12 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	Version   string
+	BuildTime string
+	GitCommit string
+)
+
 func main() {
 
 	// 1. Load Config
@@ -20,7 +26,7 @@ func main() {
 
 	// 2. Initialize Logger
 	logger, err := zap.NewProduction()
-	if cfg.Environment == "devlopment" {
+	if cfg.Environment == "development" {
 		logger, err = zap.NewDevelopment()
 	}
 	if err != nil {
