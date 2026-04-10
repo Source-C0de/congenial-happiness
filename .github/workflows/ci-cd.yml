@@ -7,7 +7,7 @@ on:
     pull_request:
         branches: ["main"]
 env:
-    GO_VERSION: "1.24"
+    GO_VERSION: "1.25"
     BINARY_NAME: "contacthub"
     IMAGE_NAME: "ghcr.io/${{ github.repository }}:latest"
 
@@ -23,7 +23,7 @@ jobs:
             - name: Set up Go
               uses: actions/setup-go@v5
               with:
-                go-version: '1.24'
+                go-version: '1.25'
                 cache: true
 
             - name: golangci-lint
@@ -64,7 +64,7 @@ jobs:
             - name: Set up Go
               uses: actions/setup-go@v5
               with:
-                go-version: '1.24'
+                go-version: '1.25'
             - name: Install dependencies
               run: go mod download
             - name: Build
