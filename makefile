@@ -167,3 +167,7 @@ clean: ## 🧹 Clean build artifacts
 # --------------------------
 ci: lint vet vuln-check test build ## 🤖 Run all CI checks
 	@echo "✅ CI pipeline passed."
+
+
+# Claude 
+tlaude: claude --dangerously-skip-permissions

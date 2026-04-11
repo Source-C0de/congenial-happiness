@@ -37,8 +37,8 @@ func Load() *Config {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	jwtEpiry, _ := strconv.Atoi(os.Getenv("JWT_EXPIRY"))
-	refreshEpiry, _ := strconv.Atoi(os.Getenv("REFRESH_EXPIRY"))
+	jwtEpiry, _ := strconv.Atoi(os.Getenv("JWT_EXPIRY_HOURS"))
+	refreshEpiry, _ := strconv.Atoi(os.Getenv("REFRESH_EXPIRY_HOURS"))
 
 	return &Config{
 		Port:               getEnv("PORT", "8080"),

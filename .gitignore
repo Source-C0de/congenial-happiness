@@ -2,3 +2,6 @@
 *.exe
 bin/
 tmp/
+.claude
+
+
