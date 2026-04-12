@@ -16,9 +16,11 @@ type Employee struct {
 	WorkEmail 		string     `db:"work_email"  json:"work_email"`
 	Mobile 		string     `db:"mobile"  json:"mobile"`
 	OfficeLocation string     `db:"office_location"  json:"office_location"`
+	PhotoURL 	*string    `db:"photo_url"  json:"photo_url"`
 	IsActive 	bool       `db:"is_active"  json:"is_active"`
+	OnlineStatus string    `db:"online_status"  json:"online_status"`
 	CreatedAt 	time.Time  `db:"created_at"  json:"created_at"`
-	UpdatedAt 	time.Time  `db:"updated_at"  json:"updated_at"`	
+	UpdatedAt 	time.Time  `db:"updated_at"  json:"updated_at"`
 }
 
 type CreateEmployeeRequest struct {
