@@ -52,6 +52,7 @@ func JWTAuth(cfg *config.Config, authSvc service.AuthService) gin.HandlerFunc {
 
 		c.Set(ContextClaimsKey, claims)
 		c.Set(ContextUserKey, claims.UserID)
+		c.Set("user_id", claims.UserID) // Add this for handler compatibility
 		c.Next()
 	}
 }

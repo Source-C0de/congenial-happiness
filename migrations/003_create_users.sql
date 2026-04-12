@@ -15,8 +15,9 @@ CREATE TABLE users (
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role  ON users(role);
 
--- Seed admin account (password: Admin@1234 — change immediately in production)
+-- Seed admin account (password: admin123 - change immediately in production)
 INSERT INTO users (email, password_hash, role) VALUES
     ('admin@corp.com',
-     '$2a$12$placeholder_replace_with_bcrypt_hash',
+     '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW',
      'admin');
+

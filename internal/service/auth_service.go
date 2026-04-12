@@ -18,11 +18,12 @@ type AuthService interface {
 	Login(ctx context.Context, req *models.LoginRequest) (*models.LoginResponse, error)
 	RefreshToken(ctx context.Context, req *models.RefreshTokenRequest) (*models.LoginResponse, error)
 	Logout(ctx context.Context, req *models.LogoutRequest) error
+	ChangePassword(ctx context.Context, userID uuid.UUID, req *models.ChangePasswordRequest) error
 }
 
 type authService struct {
-	cfg     *config.Config
-	userRepo *repository.UserRepository
+	cfg               *config.Config
+	userRepo          *repository.UserRepository
 	blacklistedTokens map[string]bool
 }
 
@@ -32,6 +33,24 @@ func NewAuthService(cfg *config.Config, userRepo *repository.UserRepository) Aut
 		userRepo:          userRepo,
 		blacklistedTokens: make(map[string]bool),
 	}
+}
+
+func (s *authService) ChangePassword(ctx context.Context, userID uuid.UUID, req *models.ChangePasswordRequest) error {
+	user, err := s.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.OldPassword)); err != nil {
+		return errors.New("old password is incorrect")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	return s.userRepo.UpdatePassword(ctx, userID, string(hashedPassword))
 }
 
 func (s *authService) Login(ctx context.Context, req *models.LoginRequest) (*models.LoginResponse, error) {

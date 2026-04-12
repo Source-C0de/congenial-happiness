@@ -45,6 +45,56 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Use
 	return &user, nil
 }
 
+func (r *UserRepository) UpdatePassword(ctx context.Context, id uuid.UUID, hashedPassword string) error {
+	query := `UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2`
+	_, err := r.DB.ExecContext(ctx, query, hashedPassword, id)
+	return err
+}
+
+func (r *UserRepository) ListUsers(ctx context.Context) ([]models.User, error) {
+	var users []models.User
+	query := `SELECT id, employee_id, email, password_hash, role, is_active, last_login_at, created_at, updated_at FROM users`
+	err := r.DB.SelectContext(ctx, &users, query)
+	return users, err
+}
+
+func (r *UserRepository) UpdateRole(ctx context.Context, id uuid.UUID, role string) error {
+	query := `UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2`
+	_, err := r.DB.ExecContext(ctx, query, role, id)
+	return err
+}
+
+func (r *UserRepository) SetUserStatus(ctx context.Context, id uuid.UUID, isActive bool) error {
+	query := `UPDATE users SET is_active = $1, updated_at = NOW() WHERE id = $2`
+	_, err := r.DB.ExecContext(ctx, query, isActive, id)
+	return err
+}
+
+func (r *UserRepository) GetDashboardStats(ctx context.Context) (map[string]interface{}, error) {
+	var totalUsers int
+	var activeEmployees int
+	var totalDepartments int
+
+	err := r.DB.GetContext(ctx, &totalUsers, "SELECT COUNT(*) FROM users")
+	if err != nil {
+		return nil, err
+	}
+	err = r.DB.GetContext(ctx, &activeEmployees, "SELECT COUNT(*) FROM employees WHERE is_active = true")
+	if err != nil {
+		return nil, err
+	}
+	err = r.DB.GetContext(ctx, &totalDepartments, "SELECT COUNT(*) FROM departments")
+	if err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{
+		"total_users":       totalUsers,
+		"active_employees":  activeEmployees,
+		"total_departments": totalDepartments,
+	}, nil
+}
+
 func (r *UserRepository) UpdateLastLogin(ctx context.Context, id uuid.UUID) error {
 	query := `UPDATE users SET last_login_at = NOW() WHERE id = $1`
 	_, err := r.DB.ExecContext(ctx, query, id)

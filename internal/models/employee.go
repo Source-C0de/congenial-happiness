@@ -22,34 +22,34 @@ type Employee struct {
 }
 
 type CreateEmployeeRequest struct {
-    FullName       string  `json:"full_name"       validate:"required,min=2,max=150"`
-    JobTitle       string  `json:"job_title"       validate:"required,min=2,max=150"`
-    DepartmentID   string  `json:"department_id"   validate:"required,uuid"`
-    WorkEmail      string  `json:"work_email"      validate:"required,email"`
-    Extension      string  `json:"extension"       validate:"required,min=3,max=10"`
+    FullName       string  `json:"full_name"       binding:"required,min=2,max=150"`
+    JobTitle       string  `json:"job_title"       binding:"required,min=2,max=150"`
+    DepartmentID   string  `json:"department_id"   binding:"required,uuid"`
+    WorkEmail      string  `json:"work_email"      binding:"required,email"`
+    Extension      string  `json:"extension"       binding:"required,min=3,max=10"`
     Mobile         *string `json:"mobile"`
     OfficeLocation *string `json:"office_location"`
 }
 
 type UpdateEmployeeRequest struct {
-    FullName       *string `json:"full_name"       validate:"omitempty,min=2,max=150"`
-    JobTitle       *string `json:"job_title"       validate:"omitempty,min=2,max=150"`
-    DepartmentID   *string `json:"department_id"   validate:"omitempty,uuid"`
-    WorkEmail      *string `json:"work_email"      validate:"omitempty,email"`
-    Extension      *string `json:"extension"       validate:"omitempty,min=3,max=10"`
+    FullName       *string `json:"full_name"       binding:"omitempty,min=2,max=150"`
+    JobTitle       *string `json:"job_title"       binding:"omitempty,min=2,max=150"`
+    DepartmentID   *string `json:"department_id"   binding:"omitempty,uuid"`
+    WorkEmail      *string `json:"work_email"      binding:"omitempty,email"`
+    Extension      *string `json:"extension"       binding:"omitempty,min=3,max=10"`
     Mobile         *string `json:"mobile"`
     OfficeLocation *string `json:"office_location"`
     IsActive       *bool   `json:"is_active"`
 }
 
 type EmployeeFilter struct {
-	Search string `json:"search"`
-	DepartmentID string `json:"department_id"`
-	IsActive *bool `json:"is_active"`
-	Page int `json:"page"`
-	PageSize int `json:"page_size"`
-	SortBy string `json:"sort_by"`
-	SortOrder string `json:"sort_order"`
+	Search        string `form:"search"`
+	DepartmentID  string `form:"department_id"`
+	IsActive     *bool   `form:"is_active"`
+	Page         int     `form:"page,default=1"`
+	PageSize     int     `form:"page_size,default=10"`
+	SortBy       string  `form:"sort_by"`
+	SortOrder    string  `form:"sort_order"`
 }
 
 type EmployeeResponse struct {
