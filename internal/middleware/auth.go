@@ -30,10 +30,16 @@ func JWTAuth(cfg *config.Config, authSvc service.AuthService) gin.HandlerFunc {
 			return
 		}
 
-		if authSvc != nil && authSvc.(interface{ IsTokenBlacklisted(string) bool }).IsTokenBlacklisted(tokenString) {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "token has been revoked"})
-			c.Abort()
-			return
+		// Check if token is blacklisted (if the service supports it)
+		if authSvc != nil {
+			type TokenChecker interface {
+				IsTokenBlacklisted(token string) bool
+			}
+			if checker, ok := authSvc.(TokenChecker); ok && checker.IsTokenBlacklisted(tokenString) {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "token has been revoked"})
+				c.Abort()
+				return
+			}
 		}
 
 		claims := &models.JWTClaims{}
