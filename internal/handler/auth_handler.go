@@ -35,7 +35,11 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.AuthSvc.Login(c, &req)
+	// Extract client IP and User-Agent for device fingerprinting
+	ip := c.ClientIP()
+	userAgent := c.Request.UserAgent()
+
+	resp, err := h.AuthSvc.Login(c, &req, ip, userAgent)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return

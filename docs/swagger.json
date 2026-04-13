@@ -16,7 +16,7 @@
         "version": "1.0"
     },
     "host": "localhost:8080",
-    "basePath": "/",
+    "basePath": "/api/v1",
     "paths": {
         "/auth/login": {
             "post": {
@@ -309,6 +309,9 @@
         "models.User": {
             "type": "object",
             "properties": {
+                "architecture": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -324,7 +327,16 @@
                 "is_active": {
                     "type": "boolean"
                 },
+                "last_browser": {
+                    "type": "string"
+                },
+                "last_ip": {
+                    "type": "string"
+                },
                 "last_login": {
+                    "type": "string"
+                },
+                "last_os": {
                     "type": "string"
                 },
                 "role": {

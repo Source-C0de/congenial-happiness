@@ -114,7 +114,12 @@ func Setup(
 			adminGroup.GET("/users", adminHandler.ListUsers)
 			adminGroup.POST("/users/invite", adminHandler.InviteUser)
 			adminGroup.PATCH("/users/:id/role", adminHandler.ChangeRole)
+			adminGroup.PATCH("/users/:id/password", adminHandler.SetPassword)
 			adminGroup.PATCH("/users/:id/deactivate", adminHandler.DeactivateUser)
+
+			// Session Policy Settings
+			adminGroup.GET("/session-settings", adminHandler.GetSessionSettings)
+			adminGroup.PATCH("/session-settings", adminHandler.UpdateSessionSettings)
 
 			// Sync
 			adminGroup.GET("/sync/settings", syncHandler.GetSettings)

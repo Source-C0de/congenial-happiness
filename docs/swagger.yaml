@@ -1,4 +1,4 @@
-basePath: /
+basePath: /api/v1
 definitions:
   models.ChangePasswordRequest:
     properties:
@@ -47,6 +47,8 @@ definitions:
     type: object
   models.User:
     properties:
+      architecture:
+        type: string
       created_at:
         type: string
       email:
@@ -57,7 +59,13 @@ definitions:
         type: string
       is_active:
         type: boolean
+      last_browser:
+        type: string
+      last_ip:
+        type: string
       last_login:
+        type: string
+      last_os:
         type: string
       role:
         type: string

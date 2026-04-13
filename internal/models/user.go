@@ -14,6 +14,10 @@ type User struct {
 	Role         string     `db:"role"  json:"role"`
 	IsActive     bool       `db:"is_active"  json:"is_active"`
 	LastLogin    *time.Time `db:"last_login_at"  json:"last_login"`
+	LastIP       *string    `db:"last_ip"  json:"last_ip"`
+	LastOS       *string    `db:"last_os"  json:"last_os"`
+	LastBrowser  *string    `db:"last_browser"  json:"last_browser"`
+	Architecture *string    `db:"architecture"  json:"architecture"`
 	CreatedAt    time.Time  `db:"created_at"  json:"created_at"`
 	UpdatedAt    time.Time  `db:"updated_at"  json:"updated_at"`
 }
@@ -37,8 +41,19 @@ type ChangePasswordRequest struct {
 }
 
 type InviteUserRequest struct {
-	Email string `json:"email" binding:"required,email"`
-	Role  string `json:"role" binding:"required,oneof=admin user"`
+	Email    string `json:"email" binding:"required,email"`
+	Role     string `json:"role" binding:"required,oneof=admin user"`
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+type SetPasswordRequest struct {
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+type SessionSettings struct {
+	ID                       string `db:"id" json:"id"`
+	InactivityTimeoutMinutes int    `db:"inactivity_timeout_minutes" json:"inactivity_timeout_minutes"`
+	LogoutOnBrowserClose     bool   `db:"logout_on_browser_close" json:"logout_on_browser_close"`
 }
 
 type UpdateRoleRequest struct {

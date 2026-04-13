@@ -315,6 +315,9 @@ const docTemplate = `{
         "models.User": {
             "type": "object",
             "properties": {
+                "architecture": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -330,7 +333,16 @@ const docTemplate = `{
                 "is_active": {
                     "type": "boolean"
                 },
+                "last_browser": {
+                    "type": "string"
+                },
+                "last_ip": {
+                    "type": "string"
+                },
                 "last_login": {
+                    "type": "string"
+                },
+                "last_os": {
                     "type": "string"
                 },
                 "role": {
@@ -355,7 +367,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "ContactHub API",
 	Description:      "This is the ContactHub API server.",

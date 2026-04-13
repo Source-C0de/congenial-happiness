@@ -45,14 +45,70 @@ func (h *AdminHandler) InviteUser(c *gin.Context) {
 		return
 	}
 
-	err := h.AdminSvc.InviteUser(c, &req)
+	user, err := h.AdminSvc.InviteUser(c, &req)
 	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "user created successfully", "user": user})
+}
+
+// SetPassword handles PATCH /api/v1/admin/users/:id/password — admin sets a user's password
+func (h *AdminHandler) SetPassword(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
+		return
+	}
+
+	var req models.SetPasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.AdminSvc.SetPassword(c, id, &req); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "user invited successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "password updated successfully"})
 }
+
+// GetSessionSettings handles GET /api/v1/admin/session-settings
+func (h *AdminHandler) GetSessionSettings(c *gin.Context) {
+	settings, err := h.AdminSvc.GetSessionSettings(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, settings)
+}
+
+// UpdateSessionSettings handles PATCH /api/v1/admin/session-settings
+func (h *AdminHandler) UpdateSessionSettings(c *gin.Context) {
+	var req struct {
+		InactivityTimeoutMinutes int  `json:"inactivity_timeout_minutes" binding:"required,min=0"`
+		LogoutOnBrowserClose     bool `json:"logout_on_browser_close"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updatedByRaw, _ := c.Get("user_id")
+	updatedBy := updatedByRaw.(uuid.UUID)
+
+	settings, err := h.AdminSvc.UpdateSessionSettings(c, req.InactivityTimeoutMinutes, req.LogoutOnBrowserClose, updatedBy)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, settings)
+}
+
 
 // ChangeRole handles PATCH /api/v1/admin/users/:id/role
 func (h *AdminHandler) ChangeRole(c *gin.Context) {

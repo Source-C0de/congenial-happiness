@@ -11,11 +11,12 @@ import (
 	"github.com/source-c0de/contacthub/internal/config"
 	"github.com/source-c0de/contacthub/internal/models"
 	"github.com/source-c0de/contacthub/internal/repository"
+	"github.com/source-c0de/contacthub/internal/util"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService interface {
-	Login(ctx context.Context, req *models.LoginRequest) (*models.LoginResponse, error)
+	Login(ctx context.Context, req *models.LoginRequest, ip, userAgent string) (*models.LoginResponse, error)
 	RefreshToken(ctx context.Context, req *models.RefreshTokenRequest) (*models.LoginResponse, error)
 	Logout(ctx context.Context, req *models.LogoutRequest) error
 	ChangePassword(ctx context.Context, userID uuid.UUID, req *models.ChangePasswordRequest) error
@@ -53,7 +54,7 @@ func (s *authService) ChangePassword(ctx context.Context, userID uuid.UUID, req 
 	return s.userRepo.UpdatePassword(ctx, userID, string(hashedPassword))
 }
 
-func (s *authService) Login(ctx context.Context, req *models.LoginRequest) (*models.LoginResponse, error) {
+func (s *authService) Login(ctx context.Context, req *models.LoginRequest, ip, userAgent string) (*models.LoginResponse, error) {
 	user, err := s.userRepo.GetByEmail(ctx, req.Email)
 	if err != nil {
 		return nil, errors.New("invalid credentials")
@@ -77,7 +78,9 @@ func (s *authService) Login(ctx context.Context, req *models.LoginRequest) (*mod
 		return nil, fmt.Errorf("failed to generate refresh token: %w", err)
 	}
 
-	if err := s.userRepo.UpdateLastLogin(ctx, user.ID); err != nil {
+	// Parse device info from User-Agent and IP
+	device := util.ParseDeviceInfo(userAgent, ip)
+	if err := s.userRepo.UpdateLastLogin(ctx, user.ID, device.IP, device.OS, device.Browser, device.Architecture); err != nil {
 		return nil, fmt.Errorf("failed to update last login: %w", err)
 	}
 
